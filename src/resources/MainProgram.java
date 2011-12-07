@@ -38,10 +38,18 @@ public class MainProgram extends SwingWorker<String[], String> {
         _listOfFiles = new ArrayList<File>();
         _numOfMonth = num;	
         _source = source;
-        list = hr.getList();
-        //cancelButton = hr.getCancelButton();
-        progress = hr.getBar();
-        handlerFrame = hr;
+        /*TODO if added only for running UnitTest - should be without if*/
+        if(hr != null){       
+        	list = hr.getList();
+        	progress = hr.getBar();       
+        	handlerFrame = hr;
+        }
+        else
+        {
+        	list = null;
+        	progress = null;
+        	handlerFrame = null;
+        }
         
         
     }
@@ -176,7 +184,8 @@ public class MainProgram extends SwingWorker<String[], String> {
         	handlerFrame.dispose();
     }
     
-    private void searchDirectory(File source)
+    /* TODO Should be private changed to public in order to perform a Unit test */
+    public void searchDirectory(File source)
     {
         //String[] extension = {"txt", "doc", "tmp"};
         File[] listOfFiles = source.listFiles();
