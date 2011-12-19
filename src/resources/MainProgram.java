@@ -187,7 +187,6 @@ public class MainProgram extends SwingWorker<String[], String> {
     /* TODO Should be private changed to public in order to perform a Unit test */
     public void searchDirectory(File source)
     {
-        //String[] extension = {"txt", "doc", "tmp"};
         File[] listOfFiles = source.listFiles();
          
          if(listOfFiles != null){
@@ -207,8 +206,8 @@ public class MainProgram extends SwingWorker<String[], String> {
          }
     }
     
-    //returnes true if current file is in right type and 
-    //wasnt used more than _numOfMonth
+    //Returns true if current file is in right type and 
+    //wasn't used more than _numOfMonth
     private boolean isFileSearched(File file)
     {
         Path p = file.toPath();   

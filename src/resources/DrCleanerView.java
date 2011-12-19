@@ -11,12 +11,11 @@ import java.io.File;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
-//import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Font;
@@ -34,15 +33,14 @@ public class DrCleanerView {
     private javax.swing.JLabel lblDirectory;
     private javax.swing.JLabel lblDirectory2;
     private javax.swing.JPanel directoryPanel;
-    private javax.swing.JRadioButton rdbtnExel;
-    private javax.swing.JRadioButton rdbtnWord;
-    private javax.swing.JRadioButton rdbtnPdf;
-    private javax.swing.JRadioButton rdbtnPowerpoint;
+    private javax.swing.JCheckBox rdbtnExel;
+    private javax.swing.JCheckBox rdbtnWord;
+    private javax.swing.JCheckBox rdbtnPdf;
+    private javax.swing.JCheckBox rdbtnPowerpoint;
     private javax.swing.JButton startButton;
     private javax.swing.JPanel timePanel;
     private javax.swing.JLabel lblType;
-    private javax.swing.JPanel typePanel;
-   
+    private javax.swing.JPanel typePanel;   
 
 	private JFrame frame;
 
@@ -94,19 +92,19 @@ public class DrCleanerView {
 		lblType.setBounds(10, 11, 299, 29);
 		typePanel.add(lblType);
 		
-		rdbtnWord = new JRadioButton("Word");
+		rdbtnWord = new JCheckBox("Word");
 		rdbtnWord.setBounds(6, 47, 109, 23);
 		typePanel.add(rdbtnWord);
 		
-		rdbtnExel = new JRadioButton("Exel");
+		rdbtnExel = new JCheckBox("Exel");
 		rdbtnExel.setBounds(6, 73, 109, 23);
 		typePanel.add(rdbtnExel);
 		
-		rdbtnPowerpoint = new JRadioButton("PowerPoint");
+		rdbtnPowerpoint = new JCheckBox("PowerPoint");
 		rdbtnPowerpoint.setBounds(6, 99, 109, 23);
 		typePanel.add(rdbtnPowerpoint);
 		
-		rdbtnPdf = new JRadioButton("PDF");
+		rdbtnPdf = new JCheckBox("PDF");
 		rdbtnPdf.setBounds(6, 125, 109, 23);
 		typePanel.add(rdbtnPdf);
 		
