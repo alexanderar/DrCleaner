@@ -2,8 +2,12 @@ package resources;
 
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Vector;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -12,7 +16,13 @@ import java.nio.file.Path;
 //import java.util.Vector;
 import javax.swing.SwingWorker;
 import java.util.concurrent.ExecutionException;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 //import javax.swing.JButton;
+//import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -32,12 +42,15 @@ public class MainProgram extends SwingWorker<String[], String> {
     //private final JButton cancelButton;
     private final JProgressBar progress;
     private final HandlerView handlerFrame;
+    private File archiveDirectory;
+    private static final String DATE_FORMAT_NOW = "yyyy_MM_dd_HH_mm_ss";
             
     public MainProgram(int num, File source, HandlerView hr)
     {
         _listOfFiles = new ArrayList<File>();
         _numOfMonth = num;	
         _source = source;
+        archiveDirectory = createArchive();
         /*TODO if added only for running UnitTest - should be without if*/
         if(hr != null){       
         	list = hr.getList();
@@ -252,9 +265,254 @@ public class MainProgram extends SwingWorker<String[], String> {
         return str;
     }
     
+	@SuppressWarnings({ "rawtypes", "serial", "unchecked" })
 	public JList<String> deleteFiles(JList<String> l)
     {
-        //TODO
-        return null;
+		 list = l;	        
+		 if(list.getMaxSelectionIndex() == -1)	     
+			 JOptionPane.showMessageDialog(null, "Please select files to be deleted! ", "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE); 	        
+		 else	     
+		 {	     
+			 int j = JOptionPane.showConfirmDialog(null, 	         
+					 "Are you sure you want to delete selected fles? ", 	                 
+					 "DrCleaner", 	                 
+					 JOptionPane.YES_NO_OPTION);	            
+			 if( j == JOptionPane.YES_OPTION)    	         
+			 {	         
+				 long space = 0;	             
+				 int numOfFilesThatCouldntDelete = 0;	             
+				 int numOfselected = 0;	             
+				 final Vector<String> temp = new Vector<String>();	             
+				 for(int i = 0; i < list.getModel().getSize(); i++)	             
+				 { 	             
+					 if(list.isSelectedIndex(i))	                 
+					 {	                 
+						 numOfselected++;                   	                     
+						 File f = new File((String)list.getModel().getElementAt(i));                	                     
+						 space += f.length();                           	                     
+						 if(!f.delete())                	                     
+						 {                                                   	                     
+							 space -= f.length();                                    	                         
+							 numOfFilesThatCouldntDelete++;	                     
+						 }						 	                    
+					 }	                 
+					 else	                 
+						 temp.add((String)list.getModel().getElementAt(i));	             
+				 }				 	                	             
+				 list.setModel(new javax.swing.AbstractListModel() {	             
+					 public int getSize() {	                 
+						 return temp.size();                        	                   
+					 }	                 
+					 public Object getElementAt(int i) {	                 
+						 return temp.get(i);	                    
+					 }	                
+				 });	             
+				 list.repaint();	             
+				 String str = "From " + numOfselected + " selected files, " 	             
+						 + (numOfselected - numOfFilesThatCouldntDelete) +	                     
+						 " were deleted\n Total saved space is: " + (space/1024)+"KB";	                
+				 JOptionPane.showMessageDialog(null, str, "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);	             
+				 if(temp.isEmpty())	             
+				 {	             
+					 JOptionPane.showMessageDialog(handlerFrame,                                                         	                 
+							 "You have no more files to handle", "DrCleaner",                                                                           	                        
+							 JOptionPane.INFORMATION_MESSAGE);	                   
+					 handlerFrame.dispose();	                
+				 }	            
+			 }	        
+		 }	       	    
+		 return list;
+    }
+	
+	@SuppressWarnings({ "rawtypes", "serial", "unchecked" })
+	public JList<String> archiveFiles(JList<String> l)
+    {
+    	list = l;
+        if(list.getMaxSelectionIndex() == -1)
+            JOptionPane.showMessageDialog(null, "Please select files to be archived! ", "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE); 
+        else
+        {
+            int j = JOptionPane.showConfirmDialog(null, 
+                    "Are you sure you want to archive selected fles? ", 
+                    "DrCleaner", 
+                    JOptionPane.YES_NO_OPTION);
+            if( j == JOptionPane.YES_OPTION)    
+            {       		            		
+            	String archiveName = now();                
+            	File newArchive = new File(archiveDirectory.getAbsolutePath() + File.separatorChar + archiveName);                
+            	newArchive.mkdir();                
+            	File zipFile = new File(newArchive.getAbsolutePath()+ ".zip");                                      	
+				long space = 0;                           	
+				int numOfFilesThatCouldntArchive = 0;                
+				int numOfselected = 0;                
+            	final Vector<String> temp = new Vector<String>();                                   
+            	for(int i = 0; i < list.getModel().getSize(); i++)                
+            	{                
+            		if(list.isSelectedIndex(i))                    
+            		{                   
+            			numOfselected++;                                           
+            			File from = new File((String)list.getModel().getElementAt(i));                         
+            			File to = new File(newArchive.getAbsolutePath() + File.separatorChar + from.getName());                        
+            			try                        
+            			{                       
+            				copyFile(from, to);
+            				space += from.length();                            
+            				if(to.exists())
+                            	from.delete();                    	              
+                            } 
+                            catch (IOException ex)
+                            {
+                            	ex.printStackTrace();
+                            }                       
+                        }
+                        else
+                            temp.add((String)list.getModel().getElementAt(i));
+                    }
+                    try
+                    {           
+                    	//making archive file from all selected files
+                    	zipDirectory(newArchive, zipFile);
+                    	//checking that zip file is not corrupted
+                    	if(isValid(zipFile))
+                    	{
+                    		for(File f: newArchive.listFiles())
+                    			f.delete();
+                        	newArchive.delete();
+                    	}
+                    	
+                    }                    
+                    catch (IOException ex)
+                    {
+                		JOptionPane.showMessageDialog(null, "Problem occured while making archive ", "DrCleaner" ,JOptionPane.ERROR_MESSAGE);
+                    	ex.printStackTrace();
+                    }
+                    catch(SecurityException ex)
+                    {
+                		JOptionPane.showMessageDialog(null, "Problem occured while deleting old files that were supposed to move to archive ",
+                				"DrCleaner" ,JOptionPane.ERROR_MESSAGE);
+                    	ex.printStackTrace();
+                    }                   
+                    
+                    list.setModel(new javax.swing.AbstractListModel() {
+                        public int getSize() {
+                            return temp.size();                        
+                        }
+                        public Object getElementAt(int i) {
+                            return temp.get(i);
+                        }
+                    });
+                    list.repaint();
+                    long savedSpace = space - zipFile.length();
+                    String str = "From " + numOfselected + " selected files, " 
+                            + (numOfselected - numOfFilesThatCouldntArchive) +
+                            " were archived\n Total saved space is: " + (savedSpace/1024)+"KB\n" + "Your archive file is at: " + newArchive.getAbsolutePath();
+                    JOptionPane.showMessageDialog(null, str, "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);
+                    if(temp.isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(handlerFrame,                                                         
+                            "You have no more files to handle", "DrCleaner",                                                                           
+                            JOptionPane.INFORMATION_MESSAGE);
+                        handlerFrame.dispose();
+                  
+                    }                                
+            	}                    	         	
+            }   
+        return list;       
+    }
+                    		
+    
+	
+	public static String now() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+        return sdf.format(cal.getTime()); 
+    }
+    
+    private void copyFile(File from, File to) throws IOException
+    {
+    	FileChannel in = (new FileInputStream(from)).getChannel();
+    	FileChannel out = (new FileOutputStream(to)).getChannel();
+    	in.transferTo(0, from.length(), out);
+    	in.close();
+    	out.close();
+    }
+    
+    public static void zipDirectory(File dir, File zipfile)    	   
+    		throws IOException {    	       	
+    	String[] entries = dir.list();    	
+    	byte[] buffer = new byte[4096]; // Create a buffer for copying    	
+    	int bytesRead;    	
+    	ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfile));    	
+    	out.setLevel(Deflater.BEST_COMPRESSION);    	
+    	for (int i = 0; i < entries.length; i++) {    	
+    		File f = new File(dir, entries[i]);    	    
+    		FileInputStream in = new FileInputStream(f); // Stream to read file    	    
+    		ZipEntry entry = new ZipEntry(f.getName()); // Make a ZipEntry    	    
+    		out.putNextEntry(entry); // Store entry    	    
+    		while ((bytesRead = in.read(buffer)) != -1)    	    
+    			out.write(buffer, 0, bytesRead);    	      
+    		in.close(); 
+    	}    	    
+    	out.close();  
+    }
+    
+    //checks that archive is not corrupted
+    private boolean isValid(File file) {     
+    	ZipFile zipfile = null;     
+    	try {        
+    		zipfile = new ZipFile(file);         
+    		return true;     
+    		} 
+    	catch (ZipException e) {
+    		JOptionPane.showMessageDialog(null, "The Archive is corupted ", "DrCleaner" ,JOptionPane.ERROR_MESSAGE);
+    		return false;     
+    		} 
+    	catch (IOException e) 
+    	{       
+    		JOptionPane.showMessageDialog(null, "Problem occured while accessing files for zipping ", "DrCleaner" ,JOptionPane.ERROR_MESSAGE);
+    		return false;     	
+    	} 
+    	finally 
+    	{         
+    		try 
+    		{             
+    			if (zipfile != null) 
+    			{                 
+    				zipfile.close();                
+    				zipfile = null;           
+    			}            			
+    		} 
+    		catch (IOException e)
+    		{    
+        		JOptionPane.showMessageDialog(null, "Problem occured while closing zipped file ", "DrCleaner" ,JOptionPane.ERROR_MESSAGE);
+
+    		}     
+    	}
+    } 
+
+	private File createArchive()
+    {
+    	archiveDirectory = null;
+    	try
+    	{  					
+    		String homePath = System.getProperty("user.home");
+			archiveDirectory = new File(homePath+File.separatorChar +"Archive");
+	    	if(!archiveDirectory.exists())
+	    		archiveDirectory.mkdir();
+	    	
+    	}
+    	catch(SecurityException ex)
+    	{
+    		ex.printStackTrace();
+    	}
+    	catch(NullPointerException ex)
+    	{
+    		ex.printStackTrace();
+    	}
+    	catch(IllegalArgumentException ex)
+    	{
+    		ex.printStackTrace();
+    	}
+    	return archiveDirectory;    	
     }
 }

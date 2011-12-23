@@ -100,6 +100,7 @@ public class HandlerView extends JDialog {
 		btnArchive = new JButton("Archive");
 		btnArchive.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				archiveButtonActionPerformed(e);
 			}
 		});
 		btnArchive.setIcon(new ImageIcon(HandlerView.class.getResource("/resources/document-archive-icon.png")));
@@ -137,8 +138,11 @@ public class HandlerView extends JDialog {
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		mainUnit.cancel(true);
 	    this.dispose();
-	}                                            
-
+	}
+	
+	private void archiveButtonActionPerformed(java.awt.event.ActionEvent evt){
+		mainUnit.archiveFiles(list);
+	}
 	  
 	private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             	
 		int s = list.getModel().getSize();	    
