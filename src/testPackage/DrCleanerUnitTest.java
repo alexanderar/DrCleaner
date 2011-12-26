@@ -23,6 +23,7 @@ public class DrCleanerUnitTest {
 		
 		//Major test folder
 		File testFolder = new File("TestFolder");
+		deleteDirectory(testFolder);
 		testFolder.mkdir();
 		//Inner test Folder
 		File testFolder2 = new File(testFolder.getAbsolutePath() +File.separatorChar + "testFolder2");
@@ -95,12 +96,27 @@ public class DrCleanerUnitTest {
 		}
 		assertEquals(expectedNumOfFiles, lisOfFiles.length, 0);
 		assertTrue(test);
-		for(File f : testFolder2.listFiles())
-			f.delete();
-		testFolder2.delete();
-		for(File f : testFolder.listFiles())
-			f.delete();
-		testFolder.delete();
+		deleteDirectory(testFolder);
 	}
-
+	static public void deleteDirectory(File path) 
+	{
+		if (path == null)
+			return;
+		if (path.exists())
+		{
+			for(File f : path.listFiles())
+			{
+				if(f.isDirectory()) 
+				{
+					deleteDirectory(f);
+					f.delete();
+				}
+			    else
+			    {
+			    	f.delete();
+			    }
+			}
+			path.delete();
+		}
+	}
 }

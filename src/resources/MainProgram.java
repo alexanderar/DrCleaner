@@ -378,8 +378,7 @@ public class MainProgram extends SwingWorker<String[], String> {
                     		for(File f: newArchive.listFiles())
                     			f.delete();
                         	newArchive.delete();
-                    	}
-                    	
+                    	}                    	
                     }                    
                     catch (IOException ex)
                     {
@@ -479,8 +478,8 @@ public class MainProgram extends SwingWorker<String[], String> {
     			if (zipfile != null) 
     			{                 
     				zipfile.close();                
-    				zipfile = null;           
-    			}            			
+    				zipfile = null;     				
+    			} 
     		} 
     		catch (IOException e)
     		{    
@@ -515,4 +514,8 @@ public class MainProgram extends SwingWorker<String[], String> {
     	}
     	return archiveDirectory;    	
     }
+	public File getArchiveDirectory()
+	{
+		return archiveDirectory;
+	}
 }
