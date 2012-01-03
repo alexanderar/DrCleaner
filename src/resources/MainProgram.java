@@ -39,7 +39,6 @@ public class MainProgram extends SwingWorker<String[], String> {
     private File _source;
     private ArrayList<File> _listOfFiles;
     private JList<String> list;
-    //private final JButton cancelButton;
     private final JProgressBar progress;
     private final HandlerView handlerFrame;
     private File archiveDirectory;
@@ -345,17 +344,34 @@ public class MainProgram extends SwingWorker<String[], String> {
 				long space = 0;                           	
 				int numOfFilesThatCouldntArchive = 0;                
 				int numOfselected = 0;                
-            	final Vector<String> temp = new Vector<String>();                                   
+            	final Vector<String> temp = new Vector<String>(); 
+            	Vector<File> archiveListOfFileNames = new Vector<File>();
             	for(int i = 0; i < list.getModel().getSize(); i++)                
             	{                
             		if(list.isSelectedIndex(i))                    
             		{                   
             			numOfselected++;                                           
-            			File from = new File((String)list.getModel().getElementAt(i));                         
-            			File to = new File(newArchive.getAbsolutePath() + File.separatorChar + from.getName());                        
+            			File from = new File((String)list.getModel().getElementAt(i));      			
+            			int extensionStartsAt = from.getName().lastIndexOf('.');
+            			String newName = from.getName().substring(0, extensionStartsAt);
+            			String extension = from.getName().substring(extensionStartsAt, from.getName().length());
+            			int counterOfFilesWithSameName = 2;
+            			String newName2 = new String(newName);
+            			File to = new File(newArchive.getAbsolutePath() + File.separatorChar + from.getName());
+            			for(int k = 0; k < archiveListOfFileNames.size(); k++)
+            			{
+            				if(archiveListOfFileNames.get(k).getName().equals(to.getName()))
+            				{
+            					newName2 = newName+"(" + counterOfFilesWithSameName + ")";            				
+                				to = new File(newArchive.getAbsolutePath() + File.separatorChar + newName2 + extension);
+                				counterOfFilesWithSameName++;   
+                				k=-1;
+            				}
+            			}
             			try                        
             			{                       
             				copyFile(from, to);
+            				archiveListOfFileNames.add(to);
             				space += from.length();                            
             				if(to.exists())
                             	from.delete();                    	              
