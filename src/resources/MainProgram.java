@@ -7,13 +7,11 @@ import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Vector;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-//import java.util.Random;
-//import java.util.Vector;
+import java.util.Vector;
 import javax.swing.SwingWorker;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.Deflater;
@@ -21,29 +19,33 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-//import javax.swing.JButton;
-//import javax.swing.ImageIcon;
+import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 
 
 /**
- *
+ * Class that implements all the interactions with file system
+ * class extends SwingWorker - An abstract class to perform lengthy GUI-interacting tasks in a dedicated thread.
  * @author Alexander Artyomov
  */
 public class MainProgram extends SwingWorker<String[], String> {    	
-    private int _numOfMonth;
-    private boolean _word,_exel,_pdf,_pow;
-    private File _source;
-    private ArrayList<File> _listOfFiles;
+    private int _numOfMonth; //number of month that file wasn't accessed - getting from DrCleanerView
+    private boolean _word,_exel,_pdf,_pow; //types of files that user choose - getting from DrCleanerView
+    private File _source; // Directory to start search - getting from DrCleanerView
+    private ArrayList<File> _listOfFiles; 
     private JList<String> list;
-    private final JProgressBar progress;
-    private final HandlerView handlerFrame;
-    private File archiveDirectory;
-    private static final String DATE_FORMAT_NOW = "yyyy_MM_dd_HH_mm_ss";
-            
+    private final JProgressBar progress; //Progress bar that shows the progress of search.
+    private final HandlerView handlerFrame; //Gui that shows options for handling files.
+    private File archiveDirectory; //Archive directory that created on users computer.
+    private static final String DATE_FORMAT_NOW = "yyyy_MM_dd_HH_mm_ss"; //date format that used to create a unique file name for archive
+
+    /* 
+     * MainProgram constructor 
+     * */        
     public MainProgram(int num, File source, HandlerView hr)
     {
         _listOfFiles = new ArrayList<File>();
@@ -61,15 +63,16 @@ public class MainProgram extends SwingWorker<String[], String> {
         	list = null;
         	progress = null;
         	handlerFrame = null;
-        }
-        
+        } 
         
     }
 
+    //Getter for _numOfMonth
     public int get_numOfMonth() {
         return _numOfMonth;
     }
     
+    //Getter for _listOfFiles
     protected ArrayList<File> getListOfFiles()
     {
         if(!_listOfFiles.isEmpty())    
@@ -77,50 +80,68 @@ public class MainProgram extends SwingWorker<String[], String> {
         return null;
     }
 
+    //Setter for _numOfMonth
     public void set_numOfMonth(int numOfMonth) {
         _numOfMonth = numOfMonth;
     }
 
+    //Getter for _word
     public boolean is_word() {
         return _word;
     }
 
+    //Setter for _word
     public void set_word(boolean word) {
         _word = word;
     }
 
+    //Getter for _exel
     public boolean is_exel() {
         return _exel;	
     }
 
+    //Setter for _exel
     public void set_exel(boolean exel) {
         _exel = exel;
     }
 
+    //Getter for _pdf
     public boolean is_pdf() {
         return _pdf;	
     }
 
+    //Setter for _pdf
     public void set_pdf(boolean pdf) {
         _pdf = pdf;	
     }
 
+    //Getter for _pow
     public boolean is_pow() {
         return _pow;	
     }
 
+    //Setter for _pow
     public void set_pow(boolean pow) {
         _pow = pow;	
     }
 
+    //Getter for _source
     public File get_source() {
         return _source;	
     }
 
+    //Setter for _source
     public void set_source(File source) {
         _source = source;	
     }
-   
+  
+    
+    /* 
+    * Function that overrides SwingWorkers doInBackground() and
+    * performs search for files that suits user's criteria
+    * The search performed in dedicated thread that runs in background.
+    */
+    @Override
     @SuppressWarnings({ "unchecked", "serial", "rawtypes" })
 	protected String[] doInBackground()
     {    
@@ -148,6 +169,10 @@ public class MainProgram extends SwingWorker<String[], String> {
         
     }
     
+    /* 
+     * Function that overrides SwingWorkers done() and
+     * displays the search results(files that were found/ message about problems that occurred while search)
+     */
     @SuppressWarnings({ "rawtypes", "unchecked", "serial" })
 	@Override
     protected void done()
@@ -196,9 +221,9 @@ public class MainProgram extends SwingWorker<String[], String> {
         	handlerFrame.dispose();
     }
     
-    /* TODO Should be private changed to public in order to perform a Unit test */
     public void searchDirectory(File source)
     {
+        //String[] extension = {"txt", "doc", "tmp"};
         File[] listOfFiles = source.listFiles();
          
          if(listOfFiles != null){
@@ -218,7 +243,7 @@ public class MainProgram extends SwingWorker<String[], String> {
          }
     }
     
-    //Returns true if current file is in right type and 
+    //Returners true if current file is in right type and 
     //wasn't used more than _numOfMonth
     private boolean isFileSearched(File file)
     {
@@ -264,66 +289,74 @@ public class MainProgram extends SwingWorker<String[], String> {
         return str;
     }
     
-	@SuppressWarnings({ "rawtypes", "serial", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
 	public JList<String> deleteFiles(JList<String> l)
     {
-		 list = l;	        
-		 if(list.getMaxSelectionIndex() == -1)	     
-			 JOptionPane.showMessageDialog(null, "Please select files to be deleted! ", "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE); 	        
-		 else	     
-		 {	     
-			 int j = JOptionPane.showConfirmDialog(null, 	         
-					 "Are you sure you want to delete selected fles? ", 	                 
-					 "DrCleaner", 	                 
-					 JOptionPane.YES_NO_OPTION);	            
-			 if( j == JOptionPane.YES_OPTION)    	         
-			 {	         
-				 long space = 0;	             
-				 int numOfFilesThatCouldntDelete = 0;	             
-				 int numOfselected = 0;	             
-				 final Vector<String> temp = new Vector<String>();	             
-				 for(int i = 0; i < list.getModel().getSize(); i++)	             
-				 { 	             
-					 if(list.isSelectedIndex(i))	                 
-					 {	                 
-						 numOfselected++;                   	                     
-						 File f = new File((String)list.getModel().getElementAt(i));                	                     
-						 space += f.length();                           	                     
-						 if(!f.delete())                	                     
-						 {                                                   	                     
-							 space -= f.length();                                    	                         
-							 numOfFilesThatCouldntDelete++;	                     
-						 }						 	                    
-					 }	                 
-					 else	                 
-						 temp.add((String)list.getModel().getElementAt(i));	             
-				 }				 	                	             
-				 list.setModel(new javax.swing.AbstractListModel() {	             
-					 public int getSize() {	                 
-						 return temp.size();                        	                   
-					 }	                 
-					 public Object getElementAt(int i) {	                 
-						 return temp.get(i);	                    
-					 }	                
-				 });	             
-				 list.repaint();	             
-				 String str = "From " + numOfselected + " selected files, " 	             
-						 + (numOfselected - numOfFilesThatCouldntDelete) +	                     
-						 " were deleted\n Total saved space is: " + (space/1024)+"KB";	                
-				 JOptionPane.showMessageDialog(null, str, "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);	             
-				 if(temp.isEmpty())	             
-				 {	             
-					 JOptionPane.showMessageDialog(handlerFrame,                                                         	                 
-							 "You have no more files to handle", "DrCleaner",                                                                           	                        
-							 JOptionPane.INFORMATION_MESSAGE);	                   
-					 handlerFrame.dispose();	                
-				 }	            
-			 }	        
-		 }	       	    
-		 return list;
+        list = l;
+        if(list.getMaxSelectionIndex() == -1)
+            JOptionPane.showMessageDialog(null, "Please select files to be deleted! ", "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE); 
+        else
+        {
+            int j = JOptionPane.showConfirmDialog(null, 
+                    "Are you sure you want to delete selected fles? ", 
+                    "DrCleaner", 
+                    JOptionPane.YES_NO_OPTION);
+            if( j == JOptionPane.YES_OPTION)    
+            {
+                long space = 0;
+                int numOfFilesThatCouldntDelete = 0;
+                int numOfselected = 0;
+                final Vector<String> temp = new Vector<String>();
+                for(int i = 0; i < list.getModel().getSize(); i++)
+                { 
+                    if(list.isSelectedIndex(i))
+                    {
+                        numOfselected++;                   
+                        File f = new File((String)list.getModel().getElementAt(i));                
+                        space += f.length(); 
+                        try
+                        {
+	                        if(!f.delete())                
+	                        {                                                   
+	                            space -= f.length();                                    
+	                            numOfFilesThatCouldntDelete++;
+	                        } 
+                        }
+                        catch (SecurityException e) {
+							// TODO: handle exception
+                        	e.printStackTrace();
+						}
+                    }
+                    else
+                        temp.add((String)list.getModel().getElementAt(i));
+                }
+                
+                list.setModel(new javax.swing.AbstractListModel() {
+                    public int getSize() {
+                        return temp.size();                        
+                    }
+                    public Object getElementAt(int i) {
+                        return temp.get(i);
+                    }
+                });
+                list.repaint();
+                String str = "From " + numOfselected + " selected files, " 
+                        + (numOfselected - numOfFilesThatCouldntDelete) +
+                        " were deleted\n Total saved space is: " + (space/1024)+"KB";
+                JOptionPane.showMessageDialog(null, str, "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);
+                if(temp.isEmpty())
+                {
+                    JOptionPane.showMessageDialog(handlerFrame,                                                         
+                        "You have no more files to handle", "DrCleaner",                                                                           
+                        JOptionPane.INFORMATION_MESSAGE);
+                    handlerFrame.dispose();
+                }
+            }
+        }
+        return list;
     }
-	
-	@SuppressWarnings({ "rawtypes", "serial", "unchecked" })
+    
+    @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
 	public JList<String> archiveFiles(JList<String> l)
     {
     	list = l;
@@ -336,44 +369,53 @@ public class MainProgram extends SwingWorker<String[], String> {
                     "DrCleaner", 
                     JOptionPane.YES_NO_OPTION);
             if( j == JOptionPane.YES_OPTION)    
-            {       		            		
-            	String archiveName = now();                
-            	File newArchive = new File(archiveDirectory.getAbsolutePath() + File.separatorChar + archiveName);                
-            	newArchive.mkdir();                
-            	File zipFile = new File(newArchive.getAbsolutePath()+ ".zip");                                      	
-				long space = 0;                           	
-				int numOfFilesThatCouldntArchive = 0;                
-				int numOfselected = 0;                
-            	final Vector<String> temp = new Vector<String>(); 
-            	Vector<File> archiveListOfFileNames = new Vector<File>();
-            	for(int i = 0; i < list.getModel().getSize(); i++)                
-            	{                
-            		if(list.isSelectedIndex(i))                    
-            		{                   
-            			numOfselected++;                                           
-            			File from = new File((String)list.getModel().getElementAt(i));      			
-            			int extensionStartsAt = from.getName().lastIndexOf('.');
-            			String newName = from.getName().substring(0, extensionStartsAt);
-            			String extension = from.getName().substring(extensionStartsAt, from.getName().length());
-            			int counterOfFilesWithSameName = 2;
-            			String newName2 = new String(newName);
-            			File to = new File(newArchive.getAbsolutePath() + File.separatorChar + from.getName());
-            			for(int k = 0; k < archiveListOfFileNames.size(); k++)
-            			{
-            				if(archiveListOfFileNames.get(k).getName().equals(to.getName()))
-            				{
-            					newName2 = newName+"(" + counterOfFilesWithSameName + ")";            				
-                				to = new File(newArchive.getAbsolutePath() + File.separatorChar + newName2 + extension);
-                				counterOfFilesWithSameName++;   
-                				k=-1;
-            				}
-            			}
-            			try                        
-            			{                       
-            				copyFile(from, to);
-            				archiveListOfFileNames.add(to);
-            				space += from.length();                            
-            				if(to.exists())
+            {
+            	String [] choises = {"Desktop Archive", "Dropbox archive", "Cancel"};
+            	int responce = JOptionPane.showOptionDialog(handlerFrame, "Please choose where to place your archive", "Archive",
+            			JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, 
+            			new ImageIcon(HandlerView.class.getResource("/resources/document-archive-icon.png")), choises, "Cancel");
+            	switch(responce)
+            	{           	
+            	case 0:       
+            	case 1:
+            	{            		
+            		String archiveName = now();                
+                	File newArchive = new File(archiveDirectory.getAbsolutePath() + File.separatorChar + archiveName);                
+                	newArchive.mkdir();                
+                	final File zipFile = new File(newArchive.getAbsolutePath()+ ".zip");                                      	
+    				long space = 0;                           	
+    				int numOfFilesThatCouldntArchive = 0;                
+    				int numOfselected = 0;                
+                	final Vector<String> temp = new Vector<String>(); 
+                	Vector<File> archiveListOfFileNames = new Vector<File>();
+                	for(int i = 0; i < list.getModel().getSize(); i++)                
+                	{                
+                		if(list.isSelectedIndex(i))                    
+                		{                   
+                			numOfselected++;                                           
+                			File from = new File((String)list.getModel().getElementAt(i));      			
+                			int extensionStartsAt = from.getName().lastIndexOf('.');
+                			String newName = from.getName().substring(0, extensionStartsAt);
+                			String extension = from.getName().substring(extensionStartsAt, from.getName().length());
+                			int counterOfFilesWithSameName = 2;
+                			String newName2 = new String(newName);
+                			File to = new File(newArchive.getAbsolutePath() + File.separatorChar + from.getName());
+                			for(int k = 0; k < archiveListOfFileNames.size(); k++)
+                			{
+                				if(archiveListOfFileNames.get(k).getName().equals(to.getName()))
+                				{
+                					newName2 = newName+"(" + counterOfFilesWithSameName + ")";            				
+                    				to = new File(newArchive.getAbsolutePath() + File.separatorChar + newName2 + extension);
+                    				counterOfFilesWithSameName++;   
+                    				k=-1;
+                				}
+                			}
+                            try
+                            {
+                            copyFile(from, to);
+                            archiveListOfFileNames.add(to);
+                            space += from.length();
+                            if(to.exists())
                             	from.delete();                    	              
                             } 
                             catch (IOException ex)
@@ -394,7 +436,18 @@ public class MainProgram extends SwingWorker<String[], String> {
                     		for(File f: newArchive.listFiles())
                     			f.delete();
                         	newArchive.delete();
-                    	}                    	
+                    	}
+                    	if(responce == 1)
+                        {
+                        	
+                    		SwingUtilities.invokeLater(new Runnable() {							
+								@Override
+								public void run() {
+									TransferDialog t = new TransferDialog(zipFile);
+									t.setVisible(true);
+								}
+							});
+                        }
                     }                    
                     catch (IOException ex)
                     {
@@ -406,7 +459,7 @@ public class MainProgram extends SwingWorker<String[], String> {
                 		JOptionPane.showMessageDialog(null, "Problem occured while deleting old files that were supposed to move to archive ",
                 				"DrCleaner" ,JOptionPane.ERROR_MESSAGE);
                     	ex.printStackTrace();
-                    }                   
+                    }                 
                     
                     list.setModel(new javax.swing.AbstractListModel() {
                         public int getSize() {
@@ -417,11 +470,14 @@ public class MainProgram extends SwingWorker<String[], String> {
                         }
                     });
                     list.repaint();
-                    long savedSpace = space - zipFile.length();
-                    String str = "From " + numOfselected + " selected files, " 
-                            + (numOfselected - numOfFilesThatCouldntArchive) +
-                            " were archived\n Total saved space is: " + (savedSpace/1024)+"KB\n" + "Your archive file is at: " + newArchive.getAbsolutePath();
-                    JOptionPane.showMessageDialog(null, str, "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);
+                    if(responce == 0)
+                    {
+	                    long savedSpace = space - zipFile.length();
+	                    String str = "From " + numOfselected + " selected files, " 
+	                            + (numOfselected - numOfFilesThatCouldntArchive) +
+	                            " were archived\n Total saved space is: " + (savedSpace/1024)+"KB\n" + "Your archive file is at: " + newArchive.getAbsolutePath();
+	                    JOptionPane.showMessageDialog(null, str, "DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);
+                    }
                     if(temp.isEmpty())
                     {
                         JOptionPane.showMessageDialog(handlerFrame,                                                         
@@ -429,15 +485,26 @@ public class MainProgram extends SwingWorker<String[], String> {
                             JOptionPane.INFORMATION_MESSAGE);
                         handlerFrame.dispose();
                   
-                    }                                
-            	}                    	         	
-            }   
-        return list;       
+                    }
+                    break;
+                                  
+            	}                    	
+            	case 2:
+            	case -1:
+            	{
+            		JOptionPane.showMessageDialog(handlerFrame,                                                         
+                            "Operation was canceled", "DrCleaner",                                                                           
+                            JOptionPane.INFORMATION_MESSAGE);         		
+              	}
+            	
+            	}          	
+            }
+        }
+        return list;            		
     }
-                    		
     
-	
-	public static String now() {
+    
+    public static String now() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
         return sdf.format(cal.getTime()); 
@@ -494,8 +561,8 @@ public class MainProgram extends SwingWorker<String[], String> {
     			if (zipfile != null) 
     			{                 
     				zipfile.close();                
-    				zipfile = null;     				
-    			} 
+    				zipfile = null;           
+    			}            			
     		} 
     		catch (IOException e)
     		{    
@@ -505,7 +572,8 @@ public class MainProgram extends SwingWorker<String[], String> {
     	}
     } 
 
-	private File createArchive()
+    
+    private File createArchive()
     {
     	archiveDirectory = null;
     	try
@@ -530,8 +598,5 @@ public class MainProgram extends SwingWorker<String[], String> {
     	}
     	return archiveDirectory;    	
     }
-	public File getArchiveDirectory()
-	{
-		return archiveDirectory;
-	}
+
 }

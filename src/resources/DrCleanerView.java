@@ -40,7 +40,8 @@ public class DrCleanerView {
     private javax.swing.JButton startButton;
     private javax.swing.JPanel timePanel;
     private javax.swing.JLabel lblType;
-    private javax.swing.JPanel typePanel;   
+    private javax.swing.JPanel typePanel;
+   
 
 	private JFrame frame;
 
@@ -166,7 +167,7 @@ public class DrCleanerView {
 		directoryPanel.add(browseButton);
 		
 		startButton = new JButton("");
-		startButton.setIcon(new ImageIcon(DrCleanerView.class.getResource("/resources/123.jpg")));
+		startButton.setIcon(new ImageIcon(DrCleanerView.class.getResource("123.jpg")));
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startButtonActionPerformed(evt);

@@ -138,11 +138,8 @@ public class HandlerView extends JDialog {
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		mainUnit.cancel(true);
 	    this.dispose();
-	}
-	
-	private void archiveButtonActionPerformed(java.awt.event.ActionEvent evt){
-		mainUnit.archiveFiles(list);
-	}
+	}                                            
+
 	  
 	private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             	
 		int s = list.getModel().getSize();	    
@@ -156,7 +153,11 @@ public class HandlerView extends JDialog {
 	
 	private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             	
 		mainUnit.deleteFiles(list);	    
-	}                                      
+	} 
+	
+	private void archiveButtonActionPerformed(java.awt.event.ActionEvent evt){
+		mainUnit.archiveFiles(list);
+	}
 	
 	private void initializeMainProgram()
     {
