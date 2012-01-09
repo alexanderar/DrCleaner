@@ -21,17 +21,36 @@ import com.dropbox.client2.session.WebAuthSession;
 import com.dropbox.client2.session.Session.AccessType;
 import com.dropbox.client2.session.WebAuthSession.WebAuthInfo;
 
-
+/**
+ * Class that implements the transfer of archive file to user's DropBox account.
+ * Class implements javax.swing.SwingWorker Class - An abstract class to perform lengthy GUI-interacting tasks in a dedicated thread.
+ * @author Alex
+ */
 public class Transfer extends SwingWorker<Integer, Object>{
 	
+	/**File to be transfered.*/
 	private File fileToSend;
+	
+	/**Window that displays the progress of transfer.*/
 	private static TransferDialog dialogWindow;
+	
+	/**Application key - used to establish connection to user's DropBox account.*/
 	final static private String APP_KEY = "u0dhelag5hvpndw";
+	
+	/**Application secret - used to establish connection to user's DropBox account.*/
     final static private String APP_SECRET = "8x2qyz0nvxktq5s";
+    
+    /**access type - describes the type of access that application gets in user's DropBox account.*/
     final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
+    
+    /**DropBox Api object - used to establish connection to user's DropBox account and to transfer a file */
     private DropboxAPI<WebAuthSession> mDBApi;
     
-    
+    /**
+     * Constructor
+     * @param f - file to transfer.
+     * @param t - transfer window that shows the progress.
+     */
     public Transfer(File f, TransferDialog t)
     {
     	fileToSend = f;
@@ -39,7 +58,10 @@ public class Transfer extends SwingWorker<Integer, Object>{
     	dialogWindow.getProgressBar().setValue(0);
     }
 	
-	
+	/**
+	 * Function that connects and transfers an archive to user's DropBox account. 
+	 * @return "0" - if transfer was successful or "1" - otherwise.
+	 */
 	protected Integer doInBackground()
 	{
 		AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
@@ -48,7 +70,7 @@ public class Transfer extends SwingWorker<Integer, Object>{
     	try
     	{
     		WebAuthInfo authInfo = mDBApi.getSession().getAuthInfo();
-    		String url = authInfo.url;	
+    		String url = authInfo.url;	//url of DropBox login and authorization page
     		java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
             if( !desktop.isSupported( java.awt.Desktop.Action.BROWSE ) ) 
             {
@@ -60,14 +82,22 @@ public class Transfer extends SwingWorker<Integer, Object>{
             FileInputStream inputStream = new FileInputStream(fileToSend);
             Integer toContinue = -2;
             JOptionPane.showMessageDialog(null, "You will be redirected to DropBox page. Please login to your accont and allow access to this application",
-       				"DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);   
+       				"DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);
+            
+            //open browser and ask from user to connect to their account and authorize access to the application:
             desktop.browse(u);
             toContinue = JOptionPane.showConfirmDialog(null, "Did You authorize the application?",
-       				"DrCleaner" ,JOptionPane.YES_NO_OPTION);         
+       				"DrCleaner" ,JOptionPane.YES_NO_OPTION); 
+            
+            //wait until user allows access to the application.
             while (toContinue == -2)          
             	Thread.sleep(1000);
+            
+            //if access wasn't allowed:
             if(toContinue == JOptionPane.NO_OPTION)
             	return 1;
+            
+            //if access allowed then request token pair and establish connection:
             RequestTokenPair r_pair = authInfo.requestTokenPair;
             session.retrieveWebAccessToken(r_pair);
             
@@ -79,11 +109,12 @@ public class Transfer extends SwingWorker<Integer, Object>{
             	return 1;
             }
             
-            
+            //show progress dialog
             dialogWindow.setVisible(true);
            
             try
             {
+            	//progress listener check the progress of transfer and displays it on progressBar of dialog window
             	ProgressListener listener = new ProgressListener() {
               				
 					@Override
@@ -98,13 +129,14 @@ public class Transfer extends SwingWorker<Integer, Object>{
 						return 100;
 					}
 				}; 
-				    
+				
+				//Transferring a file
 				Entry newEntry = mDBApi.putFile("/"+fileToSend.getName(), inputStream,
                        fileToSend.length(), null, listener);				
 				inputStream.close();
 				setProgress(100);
 				
-            	JOptionPane.showMessageDialog(null, "The uploaded file's rev is: " + newEntry.rev,
+            	JOptionPane.showMessageDialog(null, "The archive was transfered successfully.\nThe uploaded file's rev is: " + newEntry.rev,
        				"DrCleaner" ,JOptionPane.INFORMATION_MESSAGE);          	
            
             } catch (DropboxUnlinkedException e) {
@@ -145,6 +177,12 @@ public class Transfer extends SwingWorker<Integer, Object>{
 		return 0;
 	}
 	
+	/**
+	 * Function that executes when doInBackground function finished it's execution.
+	 * if file was transferred successfully than function deletes archive backup file that was saved on users hard drive.
+	 * if not, function shows appropriate error message and leaves backup archive.
+	 * At the end function closes transfer window. 
+	 */
 	protected void done() {
 		try 
 		{

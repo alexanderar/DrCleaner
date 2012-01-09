@@ -15,6 +15,12 @@ import java.beans.PropertyChangeListener;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 
+/**
+ * Class that implements transfer window - window that pops up when user choose to place the archive
+ * in to their DropBox account.
+ * @author Alex Artyomov
+ *
+ */
 public class TransferDialog extends JDialog {
 	
 	private final static JProgressBar progressBar = new JProgressBar();
@@ -30,7 +36,8 @@ public class TransferDialog extends JDialog {
 	private static int animCounter = -1;
 	
 	/**
-	 * Create the dialog.
+	 * * Constructor. Create the window.
+	 * @param f - file to be transfered.
 	 */
 	public TransferDialog(File f) {
 		
@@ -95,16 +102,21 @@ public class TransferDialog extends JDialog {
 		});
 		transfer.execute();		
 	}
+	
+	/**
+	 * Function that returns reference to progress bar.
+	 * @return reference to progressBar that shows the progress of transfer.
+	 */
 	protected JProgressBar getProgressBar()
 	{
 		return progressBar;
 	}
 	
-	protected void setPBar(int n, boolean done)
-	{
-		progressBar.setValue(n);
-		done = true;
-	}
+	/**
+	 * Function that creates an animation of transferring folder.
+	 * The animation done by displaying different image in sequence, each time that function being called.
+	 * The image to be displayed determined by value of animCounter. 
+	 */
 	protected void setIcon()
 	{
 		if(animCounter>-1)
