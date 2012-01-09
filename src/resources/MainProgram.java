@@ -1,6 +1,5 @@
 package resources;
 
-
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.attribute.FileTime;
@@ -33,18 +32,30 @@ import javax.swing.SwingUtilities;
  * @author Alexander Artyomov
  */
 public class MainProgram extends SwingWorker<String[], String> {    	
-    private int _numOfMonth; //number of month that file wasn't accessed - getting from DrCleanerView
-    private boolean _word,_exel,_pdf,_pow; //types of files that user choose - getting from DrCleanerView
-    private File _source; // Directory to start search - getting from DrCleanerView
-    private ArrayList<File> _listOfFiles; 
+	 /**number of month that file wasn't accessed - getting from DrCleanerView*/
+    private int _numOfMonth;
+    /**file type that user choose to search for - received from DrCleanerView Gui*/
+    private boolean _word,_exel,_pdf,_pow; 
+    /** Directory to start search - getting from DrCleanerView*/
+    private File _source; 
+    /**ArrayList<File> that will contain results of search*/
+    private ArrayList<File> _listOfFiles;
+    /**JList that will display the results of search/*/
     private JList<String> list;
-    private final JProgressBar progress; //Progress bar that shows the progress of search.
-    private final HandlerView handlerFrame; //Gui that shows options for handling files.
-    private File archiveDirectory; //Archive directory that created on users computer.
-    private static final String DATE_FORMAT_NOW = "yyyy_MM_dd_HH_mm_ss"; //date format that used to create a unique file name for archive
+    /**Progress bar that shows the progress of search.*/
+    private final JProgressBar progress; 
+    /**Gui that shows options for handling files.*/
+    private final HandlerView handlerFrame;
+    /**Archive directory that created on users computer.*/
+    private File archiveDirectory; 
+    /**date format that used to create a unique file name for archive*/
+    private static final String DATE_FORMAT_NOW = "yyyy_MM_dd_HH_mm_ss"; 
 
-    /* 
-     * MainProgram constructor 
+    /** 
+     * MainProgram constructor
+     * @param num - number of month
+     * @param source - Directory to start search
+     * @param hr - reference to HandlerView object that called to the constructor 
      * */        
     public MainProgram(int num, File source, HandlerView hr)
     {
@@ -67,12 +78,20 @@ public class MainProgram extends SwingWorker<String[], String> {
         
     }
 
-    //Getter for _numOfMonth
+    /**
+     * Getter for _numOfMonth
+     * 
+     * @return number of month that files weren't accessed - getting from DrCleanerView
+     */
     public int get_numOfMonth() {
         return _numOfMonth;
     }
     
-    //Getter for _listOfFiles
+    /**Getter for _listOfFiles
+     * 
+     * @return ArayList<File> that will contain result of search
+     */
+ 
     protected ArrayList<File> getListOfFiles()
     {
         if(!_listOfFiles.isEmpty())    
@@ -80,67 +99,101 @@ public class MainProgram extends SwingWorker<String[], String> {
         return null;
     }
 
-    //Setter for _numOfMonth
+    /**
+     * Setter for _numOfMonth.
+     * 
+     * @param numOfMonth
+     */
     public void set_numOfMonth(int numOfMonth) {
         _numOfMonth = numOfMonth;
     }
 
-    //Getter for _word
+    /**Getter for _word
+     * 
+     * @return true if user selected "word" type.
+     */
     public boolean is_word() {
         return _word;
     }
 
-    //Setter for _word
+    /**Setter for _word
+     * 
+     * @param word selection state of "Word" file type.
+     */
     public void set_word(boolean word) {
         _word = word;
     }
 
-    //Getter for _exel
+    /**Getter for _exel
+     * 
+     * @return true if user selected "exel" type.
+     */
     public boolean is_exel() {
         return _exel;	
     }
 
-    //Setter for _exel
+    /**Setter for _exel
+     * 
+     * @param exel selection state of "Exel" file type.
+     */
     public void set_exel(boolean exel) {
         _exel = exel;
     }
 
-    //Getter for _pdf
+    /**Getter for _pdf
+     * 
+     * @return true if user selected "pdf" type.
+     */
     public boolean is_pdf() {
         return _pdf;	
     }
 
-    //Setter for _pdf
+    /**Setter for _pdf
+     * 
+     * @param pdf selection state of "PDF" file type.
+     */
     public void set_pdf(boolean pdf) {
         _pdf = pdf;	
     }
 
-    //Getter for _pow
+    /**Getter for _pow
+     * 
+     * @return true if user selected "PowerPoint" type.
+     */
     public boolean is_pow() {
         return _pow;	
     }
 
-    //Setter for _pow
+    /**Setter for _pow
+     * 
+     * @param pow selection state of "PowerPoint" file type.
+     */
     public void set_pow(boolean pow) {
         _pow = pow;	
     }
 
-    //Getter for _source
+    /**Getter for _source
+     * 
+     * @return directory to start search from.
+     */
     public File get_source() {
         return _source;	
     }
 
-    //Setter for _source
+    /**Setter for _source
+     * 
+     * @param source - directory to start search from
+     */
     public void set_source(File source) {
         _source = source;	
     }
   
     
-    /* 
-    * Function that overrides SwingWorkers doInBackground() and
-    * performs search for files that suits user's criteria
-    * The search performed in dedicated thread that runs in background.
-    */
+    /** 
+     * Function that overrides SwingWorkers doInBackground() and performs search for files that suits user's criteria.
+     * The search performed in dedicated thread that runs in background.
+     * @return string[] that contains file names that were found in search
+     */
     @Override
     @SuppressWarnings({ "unchecked", "serial", "rawtypes" })
 	protected String[] doInBackground()
@@ -169,7 +222,7 @@ public class MainProgram extends SwingWorker<String[], String> {
         
     }
     
-    /* 
+    /** 
      * Function that overrides SwingWorkers done() and
      * displays the search results(files that were found/ message about problems that occurred while search)
      */
@@ -221,9 +274,12 @@ public class MainProgram extends SwingWorker<String[], String> {
         	handlerFrame.dispose();
     }
     
+    /**Private function that implements the searching algorithm.
+     * 
+     * @param source - directory to start search from.
+     */
     public void searchDirectory(File source)
     {
-        //String[] extension = {"txt", "doc", "tmp"};
         File[] listOfFiles = source.listFiles();
          
          if(listOfFiles != null){
@@ -243,8 +299,12 @@ public class MainProgram extends SwingWorker<String[], String> {
          }
     }
     
-    //Returners true if current file is in right type and 
-    //wasn't used more than _numOfMonth
+    /**
+     * Function that checks if given file is being searched Returners true if current file has a right type and wasn't used more than _numOfMonth
+     * 
+     * @param file - file to check.
+     * @return true if given file fits users criteria for search
+     */
     private boolean isFileSearched(File file)
     {
         Path p = file.toPath();   
@@ -281,6 +341,11 @@ public class MainProgram extends SwingWorker<String[], String> {
         return false;
     }
     
+    /**Function that returns string array of file names that were found in search
+     * 
+     * @return  string[] that contains file names that were found in search
+     */
+
     public String [] fileList()
     {
         String [] str = new String[_listOfFiles.size()];
@@ -289,6 +354,16 @@ public class MainProgram extends SwingWorker<String[], String> {
         return str;
     }
     
+    
+    /**
+     * Function that implements deleting algorithm.
+     * Function deletes all the files that were found by search and were selected by user to be deleted.
+     * At the end function updates the list of files that displayed in Handler window.
+     * 
+     * @param l - list of file with selected files to be deleted
+     * @return updated list of files
+     */
+
     @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
 	public JList<String> deleteFiles(JList<String> l)
     {
@@ -356,6 +431,16 @@ public class MainProgram extends SwingWorker<String[], String> {
         return list;
     }
     
+    /** 
+     * Function that implements archive algorithm.
+     * Function archives all the files that were found by search and were selected by user to be archived.
+     * Function places an archive either in user's DropBox account or saves it on users hard drive, according to users choice.
+     * At the end function updates the list of files that displayed in Handler window.Function returns JList<String> of remaining files.
+     * 
+     * @param l - list of file with selected files to be compressed to archive.
+     * @return updated list of files.
+     */
+
     @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
 	public JList<String> archiveFiles(JList<String> l)
     {
@@ -387,12 +472,17 @@ public class MainProgram extends SwingWorker<String[], String> {
     				int numOfFilesThatCouldntArchive = 0;                
     				int numOfselected = 0;                
                 	final Vector<String> temp = new Vector<String>(); 
-                	Vector<File> archiveListOfFileNames = new Vector<File>();
+                	Vector<File> archiveListOfFileNames = new Vector<File>(); //Will contain files that are placed in archive
                 	for(int i = 0; i < list.getModel().getSize(); i++)                
                 	{                
                 		if(list.isSelectedIndex(i))                    
                 		{                   
-                			numOfselected++;                                           
+                			numOfselected++;
+                			
+                			/*
+                			 * Because in the archive files stored only by their names(not the full path). we need to check if there are
+                			 * files that have same names and rename them by adding "(index)" at the end of the name and just before the extension
+                			 **/
                 			File from = new File((String)list.getModel().getElementAt(i));      			
                 			int extensionStartsAt = from.getName().lastIndexOf('.');
                 			String newName = from.getName().substring(0, extensionStartsAt);
@@ -415,7 +505,9 @@ public class MainProgram extends SwingWorker<String[], String> {
                             copyFile(from, to);
                             archiveListOfFileNames.add(to);
                             space += from.length();
-                            if(to.exists())
+                            
+                            //check that copy of file was made and that it is not corrupted.
+                            if(to.exists() && from.length() == to.length())
                             	from.delete();                    	              
                             } 
                             catch (IOException ex)
@@ -439,7 +531,9 @@ public class MainProgram extends SwingWorker<String[], String> {
                     	}
                     	if(responce == 1)
                         {
-                        	
+                        	/*
+                        	 * in case that user choose to place the archive in DropBox account - open transfer dialog.
+                        	 * */
                     		SwingUtilities.invokeLater(new Runnable() {							
 								@Override
 								public void run() {
@@ -472,6 +566,9 @@ public class MainProgram extends SwingWorker<String[], String> {
                     list.repaint();
                     if(responce == 0)
                     {
+                    	
+                    	
+                    	// Feedback that concludes archive operation 
 	                    long savedSpace = space - zipFile.length();
 	                    String str = "From " + numOfselected + " selected files, " 
 	                            + (numOfselected - numOfFilesThatCouldntArchive) +
@@ -503,13 +600,26 @@ public class MainProgram extends SwingWorker<String[], String> {
         return list;            		
     }
     
-    
+    /**
+     * Function that returns String representation of current date and time in DATE_FORMAT_NOW format.
+     * Function used to generate unique names for new archives
+     * 
+     * @return String representation of current date and time in DATE_FORMAT_NOW format.
+     */
+
     public static String now() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
         return sdf.format(cal.getTime()); 
     }
     
+    /**
+     * Function that copies file "from" to file "to".
+     * 
+     * @param from - file to copy from.
+     * @param to - file to copy to.
+     * @throws IOException
+     */
     private void copyFile(File from, File to) throws IOException
     {
     	FileChannel in = (new FileInputStream(from)).getChannel();
@@ -519,9 +629,15 @@ public class MainProgram extends SwingWorker<String[], String> {
     	out.close();
     }
     
+    /** Function that compresses given directory - dir to given zip file - zipfile.
+     * 
+     * @param dir - directory to compress
+     * @param zipfile - zip file to contain compressed directory.
+     * @throws IOException
+     */
     public static void zipDirectory(File dir, File zipfile)    	   
     		throws IOException {    	       	
-    	String[] entries = dir.list();    	
+    	String[] entries = dir.list(); 
     	byte[] buffer = new byte[4096]; // Create a buffer for copying    	
     	int bytesRead;    	
     	ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfile));    	
@@ -538,7 +654,12 @@ public class MainProgram extends SwingWorker<String[], String> {
     	out.close();  
     }
     
-    //checks that archive is not corrupted
+    /**checks that archive is not corrupted
+     * 
+     * @param file - file to check
+     * @return true - if file is not corrupted.
+     * @return false - otherwise.
+     */
     private boolean isValid(File file) {     
     	ZipFile zipfile = null;     
     	try {        
@@ -572,7 +693,10 @@ public class MainProgram extends SwingWorker<String[], String> {
     	}
     } 
 
-    
+    /** Function that creates a "ARCHIVE" folder that is going to contain all the archives that will be created by this program.
+     * 
+     * @return folder that is going to contain all the archives that will be created by this program
+     */
     private File createArchive()
     {
     	archiveDirectory = null;

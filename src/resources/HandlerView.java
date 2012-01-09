@@ -1,7 +1,5 @@
 package resources;
 
-//import java.awt.BorderLayout;
-//import java.awt.EventQueue;
 
 import javax.swing.JList;
 import javax.swing.DefaultListSelectionModel;
@@ -10,36 +8,36 @@ import javax.swing.JProgressBar;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
-
 import java.awt.Font;
 import java.awt.Color;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
-//import java.awt.Dimension;
 
-
+/**
+ * Class that implements "handling" window of program - window that displays search results 
+ * and offers to user handling options for those results.
+ */
 public class HandlerView extends JDialog {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 5501052552433961274L;
-	private JButton btnSelectAll;
-	private JButton btnClearAll;
-	private JButton btnArchive;
-	private JButton btnDelete;
-	private JButton btnCancel;
-	private JList<String> list;
-	private JProgressBar progressBar;
+	private final JButton btnSelectAll;
+	private final JButton btnClearAll;
+	private final JButton btnArchive;
+	private final JButton btnDelete;
+	private final JButton btnCancel;
+	private final JList<String> list;
+	private final JProgressBar progressBar;
 	private static MainProgram mainUnit;
     private static DrCleanerView dr;
 	
-	/**
-	 * Launch the application.
-	 */
-	
+
+    /**
+     * Constructor.
+     * @param d - reference to main window that called to the constructor
+     */
 	@SuppressWarnings("serial")
 	public HandlerView( DrCleanerView d) {
 		
@@ -135,30 +133,51 @@ public class HandlerView extends JDialog {
 		initializeMainProgram();	
 	}
 	
+	/**
+	 * Function executes when user clicked on "cancel" button.
+	 * @param evt - event that occurred when user clicked on "cancel" button.
+	 */
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		mainUnit.cancel(true);
 	    this.dispose();
 	}                                            
 
-	  
+	/**
+	 * Function executes when user clicked on "select all" button.
+	 * @param evt - event that occurred when user clicked on "select all" button.
+	 */
 	private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             	
 		int s = list.getModel().getSize();	    
 		list.addSelectionInterval(0, s);	    
 	}                                           
 	
-	
+	/**
+	 * Function executes when user clicked on "clear all" button.
+	 * @param evt - event that occurred when user clicked on "clear all" button.
+	 */
 	private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            	
 		list.clearSelection();	    
 	}                                           
 	
+	/**
+	 * Function executes when user clicked on "delete" button.
+	 * @param evt - event that occurred when user clicked on "delete" button.
+	 */
 	private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             	
 		mainUnit.deleteFiles(list);	    
 	} 
 	
+	/**
+	 * Function executes when user clicked on "archive" button.
+	 * @param evt - event that occurred when user clicked on "archive" button.
+	 */
 	private void archiveButtonActionPerformed(java.awt.event.ActionEvent evt){
 		mainUnit.archiveFiles(list);
 	}
 	
+	/**
+	 * Function that initializes and executes(perform of search according to user's criteria) MainProgram class object.
+	 */
 	private void initializeMainProgram()
     {
         mainUnit = new MainProgram(dr.getNumOfMonth(), dr.getRoot(), this);                        
@@ -169,21 +188,36 @@ public class HandlerView extends JDialog {
         mainUnit.execute();
     }
     
+	/**
+	 * Getter for "cancel" button
+	 * @return reference to "cancel" button
+	 */
     protected JButton getCancelButton()
     {
         return btnCancel;
     }
     
+    /**
+     * Getter for list
+     * @return reference to Jlist<String> that displays results of search.
+     */
     protected JList<String> getList()
     {
         return list;
     }
     
+    /**
+     * 
+     * @return reference to progress bar
+     */
     protected JProgressBar getBar()
     {
         return progressBar;
     }
 	
+    /**
+     * Function that enables all the buttons that are used to handle results of search
+     */
 	protected final void enableButtons()
     {
         btnArchive.setEnabled(true);
@@ -192,16 +226,14 @@ public class HandlerView extends JDialog {
         btnSelectAll.setEnabled(true);
     }
     
+	/**
+     * Function that disables all the buttons that are used to handle results of search
+     */
     protected final void disableButtons()
     {
         btnArchive.setEnabled(false);
         btnDelete.setEnabled(false);
         btnClearAll.setEnabled(false);
         btnSelectAll.setEnabled(false);
-    }
-    
-    protected JList<String> getJList()
-    {
-        return list;
     }
 }

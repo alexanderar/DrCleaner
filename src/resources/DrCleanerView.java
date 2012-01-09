@@ -21,6 +21,12 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.Font;
 import java.awt.Color;
 
+/**
+ * Class that implements main window of the program and also lu
+ * 
+ * @author Alex Artyomov
+ *
+ */
 public class DrCleanerView {
 	
 	private String[] monthArray;
@@ -41,8 +47,6 @@ public class DrCleanerView {
     private javax.swing.JPanel timePanel;
     private javax.swing.JLabel lblType;
     private javax.swing.JPanel typePanel;
-   
-
 	private JFrame frame;
 
 	/**
@@ -73,7 +77,6 @@ public class DrCleanerView {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-
 	private void initialize() {
 
 		frame = new JFrame();
@@ -177,6 +180,10 @@ public class DrCleanerView {
 		frame.getContentPane().add(startButton);
 	}
 	
+	/**
+	 * Function that executes when user clicks on start button.
+	 * @param evt - event that occurred on start button.
+	 */
 	private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {                                            
 
 	    month = timeComboBox.getSelectedIndex();
@@ -198,12 +205,21 @@ public class DrCleanerView {
 	    }
 	}
 	
+	/**
+	 * Function that returns true if at least one file type was selected
+	 * @return true if at least one file type was selected and false otherwise.
+	 */
 	private boolean atLeastOneSelected(){
 	    if(rdbtnWord.isSelected()||rdbtnExel.isSelected()||rdbtnPowerpoint.isSelected()
 	            || rdbtnPdf.isSelected())
 	        return true;
 	    return false;
 	}
+	
+	/**
+	 * Function that launches {@link JFileChooser} to select root directory for search.
+	 * @return Root directory for search.
+	 */
 	private File getDerctory()
 	{
 	    JFileChooser fileChooser = new JFileChooser();
@@ -215,29 +231,54 @@ public class DrCleanerView {
 	    selectedDest = file;
 	    return file;	
 	}
+	/**
+	 * Getter for "word" radioButton
+	 * @return true - if "Word" type was selected.
+	 */
 	public boolean getWordStatus()
 	{
 	    return rdbtnWord.isSelected();
 	}
 
+	/**
+	 * Getter for "Exel" radioButton
+	 * @return true - if "Exel" type was selected.
+	 */
 	public boolean getExelStatus()
 	{
 	    return rdbtnExel.isSelected();
 	}
+	
+	/**
+	 * Getter for "PowerPoint" radioButton
+	 * @return true - if "PowerPoint" type was selected.
+	 */
 	public boolean getPowStatus()
 	{
 	    return rdbtnPowerpoint.isSelected();
 	}
+	/**
+	 * Getter for "PDF" radioButton
+	 * @return true - if "PDF" type was selected.
+	 */
 	public boolean getPDFStatus()
 	{
 	    return rdbtnPdf.isSelected();
 	}
 
+	/**
+	 * Getter for "_numOfMonth" value.
+	 * @return number of month that user selected for search.
+	 */
 	public int getNumOfMonth()
 	{
 	    return month;
 	}
 
+	/**
+	 * Getter for selectedDest.
+	 * @return Directory to start search from.
+	 */
 	public File getRoot()
 	{
 	    return selectedDest;
