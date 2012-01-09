@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * Class that implements all the interactions with file system
- * class extends SwingWorker - An abstract class to perform lengthy GUI-interacting tasks in a dedicated thread.
+ * class implements javax.swing.SwingWorker Class - An abstract class to perform lengthy GUI-interacting tasks in a dedicated thread.
  * @author Alexander Artyomov
  */
 public class MainProgram extends SwingWorker<String[], String> {    	
