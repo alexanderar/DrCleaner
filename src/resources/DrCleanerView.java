@@ -22,7 +22,7 @@ import java.awt.Font;
 import java.awt.Color;
 
 /**
- * Class that implements main window of the program and also lu
+ * Class that implements main window of the program
  * 
  * @author Alex Artyomov
  *
