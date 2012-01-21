@@ -19,7 +19,7 @@
         <pathelement location="src/lib/httpcore-4.0.1.jar"/>
         <pathelement location="src/lib/httpmime-4.0.3.jar"/>
         <pathelement location="src/lib/json_simple-1.1.jar"/>
-        <pathelement location="src/lib/junit-4.8.2.jar"/>
+        <pathelement location="junit.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
