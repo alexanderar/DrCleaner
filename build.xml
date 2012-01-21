@@ -25,7 +25,6 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -77,8 +76,6 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
-            <test name="testPackage.DrCleanerArchiveTest" todir="${junit.output.dir}"/>
-            <test name="testPackage.DrCleanerDeleteTest" todir="${junit.output.dir}"/>
             <test name="testPackage.DrCleanerUnitTest" todir="${junit.output.dir}"/>
             <classpath refid="DrCleaner.classpath"/>
         </junit>
