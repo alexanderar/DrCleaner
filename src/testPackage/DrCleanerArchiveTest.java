@@ -16,7 +16,6 @@ import javax.swing.JList;
 
 import org.junit.Test;
 import resources.*;
-import testPackage.DrCleanerDeleteTest.myRobot;
 
 public class DrCleanerArchiveTest {
 
