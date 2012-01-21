@@ -147,7 +147,7 @@ public class DrCleanerDeleteTest
 			try
 			{
 				Robot r = new Robot();
-				r.delay(3000);
+				r.delay(2000);
 				for (int i = 0; i < 3; i++)
 				{
 					r.keyPress(KeyEvent.VK_ENTER);
