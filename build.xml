@@ -11,24 +11,21 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
-    <path id="JUnit 4.libraryclasspath">
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.junit_4.8.2.v4_8_2_v20110321-1705/junit.jar"/>
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.hamcrest.core_1.1.0.v20090501071000.jar"/>
-    </path>
     <path id="DrCleaner.classpath">
         <pathelement location="bin"/>
-        <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="src/lib/commons-logging-1.1.1.jar"/>
         <pathelement location="src/lib/dropbox-java-sdk-1.2.2.jar"/>
         <pathelement location="src/lib/httpclient-4.0.3.jar"/>
         <pathelement location="src/lib/httpcore-4.0.1.jar"/>
         <pathelement location="src/lib/httpmime-4.0.3.jar"/>
         <pathelement location="src/lib/json_simple-1.1.jar"/>
+        <pathelement location="src/lib/junit-4.8.2.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -80,6 +77,8 @@
         <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr">
             <formatter type="xml"/>
+            <test name="testPackage.DrCleanerArchiveTest" todir="${junit.output.dir}"/>
+            <test name="testPackage.DrCleanerDeleteTest" todir="${junit.output.dir}"/>
             <test name="testPackage.DrCleanerUnitTest" todir="${junit.output.dir}"/>
             <classpath refid="DrCleaner.classpath"/>
         </junit>
