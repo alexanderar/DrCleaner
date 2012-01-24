@@ -30,7 +30,7 @@ import java.awt.Color;
 public class DrCleanerView {
 	
 	private String[] monthArray;
-    private final int MAX_MONTH = 25;
+    private final int MAX_MONTH = 37;
     private File selectedDest;
     private int month;
     private JComboBox<String> timeComboBox;
@@ -118,7 +118,7 @@ public class DrCleanerView {
 		frame.getContentPane().add(timePanel);
 		timePanel.setLayout(null);
 		
-		lblTime = new JLabel("Please Choose time period");
+		lblTime = new JLabel("Please Choose time period (in months).");
 		lblTime.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 16));
 		lblTime.setBounds(10, 11, 260, 25);
 		timePanel.add(lblTime);

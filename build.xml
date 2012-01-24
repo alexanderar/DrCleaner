@@ -72,14 +72,6 @@
             <classpath refid="DrCleaner.classpath"/>
         </junit>
     </target>
-    <target name="DrCleanerUnitTest">
-        <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
-            <formatter type="xml"/>
-            <test name="testPackage.DrCleanerUnitTest" todir="${junit.output.dir}"/>
-            <classpath refid="DrCleaner.classpath"/>
-        </junit>
-    </target>
     <target name="DrCleanerView">
         <java classname="resources.DrCleanerView" failonerror="true" fork="yes">
             <classpath refid="DrCleaner.classpath"/>
