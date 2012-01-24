@@ -458,7 +458,7 @@ public class MainProgram extends SwingWorker<String[], String> {
             	String [] choises = {"Desktop Archive", "Dropbox archive", "Cancel"};
             	int responce = JOptionPane.showOptionDialog(handlerFrame, "Please choose where to place your archive", "Archive",
             			JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, 
-            			new ImageIcon(HandlerView.class.getResource("/resources/document-archive-icon.png")), choises, "Cancel");
+            			new ImageIcon(HandlerView.class.getResource("/resources/document-archive-icon.png")), choises, "Desktop Archive");
             	switch(responce)
             	{           	
             	case 0:       

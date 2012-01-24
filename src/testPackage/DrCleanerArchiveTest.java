@@ -3,6 +3,8 @@ package testPackage;
 import static org.junit.Assert.*;
 
 
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,7 +36,6 @@ public class DrCleanerArchiveTest {
 		testFolder2.mkdir();
 		
 		int expectedFilesNumToArchive = createTestFiles(m_fileNum);
-		System.out.println("expectedFilesNumToArchive = " + expectedFilesNumToArchive);
 		MainProgram temp = new MainProgram(0, testFolder, new HandlerView(new DrCleanerView()));
 		temp.set_exel(true);
 		temp.set_pdf(true);
@@ -50,7 +51,14 @@ public class DrCleanerArchiveTest {
 		//check results after all	
 		
 		long archivesNumBefore = arciveDirContentBefore.length;
+		
+		myRobot mr = new myRobot();
+		Thread t = new Thread(mr);
+		t.start();
+		
 		temp.archiveFiles(l);
+		
+				
 		File[] arciveDirContentAfter = archiveDirectory.listFiles();
 		long archivesNumAfter = arciveDirContentAfter.length;
 		
@@ -72,7 +80,6 @@ public class DrCleanerArchiveTest {
 				numOfFilesInArchive++;
 			zis.close();
 			fis.close();
-			System.out.println("numOfFilesInArchive = " + numOfFilesInArchive);
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -168,6 +175,27 @@ public class DrCleanerArchiveTest {
 			    }
 			}
 			path.delete();
+		}
+	}
+	
+	public class myRobot extends Thread
+	{
+		public void run()
+		{
+			try
+			{
+				Robot r = new Robot();
+				r.delay(2000);
+				for (int i = 0; i < 4; i++)
+				{
+					r.keyPress(KeyEvent.VK_ENTER);
+					r.delay(1000);
+					r.keyRelease(KeyEvent.VK_ENTER);
+				}
+			}
+			catch (Exception e)
+			{
+			}
 		}
 	}
 }
