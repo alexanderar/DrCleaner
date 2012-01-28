@@ -20,6 +20,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Toolkit;
 
 /**
  * Class that implements main window of the program
@@ -47,7 +48,7 @@ public class DrCleanerView {
     private javax.swing.JPanel timePanel;
     private javax.swing.JLabel lblType;
     private javax.swing.JPanel typePanel;
-	private JFrame frame;
+	private JFrame frmDrcleaner;
 
 	/**
 	 * Launch the application.
@@ -57,7 +58,7 @@ public class DrCleanerView {
 			public void run() {
 				try {
 					DrCleanerView window = new DrCleanerView();
-					window.frame.setVisible(true);
+					window.frmDrcleaner.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -79,16 +80,18 @@ public class DrCleanerView {
 	 */
 	private void initialize() {
 
-		frame = new JFrame();
-		frame.setResizable(false);
-		frame.setBounds(100, 100, 862, 642);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmDrcleaner = new JFrame();
+		frmDrcleaner.setIconImage(Toolkit.getDefaultToolkit().getImage(DrCleanerView.class.getResource("/resources/123.jpg")));
+		frmDrcleaner.setTitle("DrCleaner");
+		frmDrcleaner.setResizable(false);
+		frmDrcleaner.setBounds(100, 100, 862, 642);
+		frmDrcleaner.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmDrcleaner.getContentPane().setLayout(null);
 		
 		typePanel = new JPanel();
 		typePanel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		typePanel.setBounds(10, 11, 645, 226);
-		frame.getContentPane().add(typePanel);
+		frmDrcleaner.getContentPane().add(typePanel);
 		typePanel.setLayout(null);
 		
 		lblType = new JLabel("Please select documents type");
@@ -115,7 +118,7 @@ public class DrCleanerView {
 		timePanel = new JPanel();
 		timePanel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		timePanel.setBounds(10, 248, 645, 222);
-		frame.getContentPane().add(timePanel);
+		frmDrcleaner.getContentPane().add(timePanel);
 		timePanel.setLayout(null);
 		
 		lblTime = new JLabel("Please Choose time period (in months).");
@@ -140,7 +143,7 @@ public class DrCleanerView {
 		directoryPanel = new JPanel();
 		directoryPanel.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
 		directoryPanel.setBounds(10, 481, 826, 112);
-		frame.getContentPane().add(directoryPanel);
+		frmDrcleaner.getContentPane().add(directoryPanel);
 		directoryPanel.setLayout(null);
 		
 		lblDirectory = new JLabel("Please choose directory for search");
@@ -170,6 +173,7 @@ public class DrCleanerView {
 		directoryPanel.add(browseButton);
 		
 		startButton = new JButton("");
+		startButton.setToolTipText("Search");
 		startButton.setIcon(new ImageIcon(DrCleanerView.class.getResource("123.jpg")));
 		startButton.addActionListener(new ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -177,7 +181,7 @@ public class DrCleanerView {
             }
 		});
 		startButton.setBounds(665, 11, 171, 459);
-		frame.getContentPane().add(startButton);
+		frmDrcleaner.getContentPane().add(startButton);
 	}
 	
 	/**
